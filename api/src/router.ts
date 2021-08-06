@@ -8,4 +8,6 @@ export const createRouter = () => {
 			message: "Hello World!! This is Express",
 		});
 	});
+	// Router()をindex.tsに返す
+	return router;
 };

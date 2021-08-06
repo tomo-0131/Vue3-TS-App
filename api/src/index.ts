@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const port = 3000;
 
-app.use("/", createRouter);
+app.use("/", createRouter());
 
 app.listen(port, () => {
 	console.log(`Listening at http://localhost:${port}/`);
