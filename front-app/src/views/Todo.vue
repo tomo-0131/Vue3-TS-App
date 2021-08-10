@@ -1,7 +1,6 @@
 <template>
   <div class="todo">
     <h1>TODO APP</h1>
-
     <div class="create">
       <div class="title">
         <label>タイトル: </label>
