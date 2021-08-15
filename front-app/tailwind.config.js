@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const defaultTheme = require('tailwindcss/defaultTheme');
+const defaultTheme = require("tailwindcss/defaultTheme");
 
 module.exports = {
   purge: [],
@@ -26,7 +26,7 @@ module.exports = {
 
     extend: {
       colors: {
-        'font-color': '#2c3e50',
+        "font-color": "#2c3e50",
       },
     },
   },
