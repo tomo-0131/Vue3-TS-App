@@ -1,98 +1,105 @@
 <template>
-  <div class="todo">
-    <h1>TODO APP</h1>
-    <div class="create">
-      <div class="title">
-        <label>タイトル: </label>
-        <input  @keyup.enter="createTodo" v-model="state.title" placeholder="Todoを入力"/>
-        <button @click="createTodo">Create</button>
-      </div>
+  <h1>TODO APP</h1>
+  <div class="container mx-auto">
+    <div class="m-3 px-3 py-3 bg-gray-200 rounded-md shadow">
+      <TodoInput />
     </div>
-    <br>
+    <br />
+    <loading :active="isLoading" :can-cancel="true" :is-full-page="fullPage" />
+  </div>
 
-      <loading
-        :active="isLoading"
-        :can-cancel="true"
-        :is-full-page="fullPage"
-      />
+  <!-- データ件数 -->
+  <h4>{{ state.todos.length }}件</h4>
 
-      <div class="todo-item" v-for="todo in state.todos" :key="todo.uuid">
-        <input class="margin-r1" v-model="todo.title" />
-        <select class="margin-r1" v-model="todo.status">
-          <option value="todo">TODO</option>
-          <option value="wip">処理中</option>
-          <option value="done">完了</option>
-        </select>
-        <button class="update margin-r1" @click="updateTodo(todo)">Update</button>
-        <button class="delete margin-r1" @click="deleteTodo(todo)">Delete</button>
-      </div>
+  <!-- Todoリストを表示 -->
+  <button @click="moveTodoEdit">編集</button>
 
-    </div>
+  <TodoItem
+    v-for="item in state.todos"
+    :key="item.uuid"
+    :todo=item
+    @update="moveTodoEdit"
+    @delete="deleteTodo"
+  />
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref } from 'vue';
-import axios from 'axios';
-import Loading from 'vue-loading-overlay';
-import 'vue-loading-overlay/dist/vue-loading.css';
+import router from "../router"
+import { defineComponent, reactive, ref } from "vue";
+import axios from "axios";
+import Loading from "vue-loading-overlay";
+import TodoItem from '../components/TodoItem.vue';
+import TodoInput from '../components/TodoInput.vue';
 
-const baseURL = 'http://localhost:3000/';
+import "vue-loading-overlay/dist/vue-loading.css";
+
+const baseURL = "http://localhost:3000/";
 
 type Todo = {
   uuid: string;
   title: string;
-  status: 'todo' | 'wip' | 'done';
+  status: "todo" | "wip" | "done";
 };
 
 export default defineComponent({
-  name: 'Todo',
+  name: "Todo",
   components: {
     Loading,
+    TodoItem,
+    TodoInput,
   },
+
   setup() {
     const state = reactive({
-      title: '',
+      title: "",
       todos: [],
     });
 
     const isLoading = ref(false);
     const fullPage = ref(true);
 
+    // 全データ取得
     const getTodos = async () => {
       isLoading.value = true;
-      await axios.get(baseURL)
+      await axios
+        .get(baseURL)
         .then((res) => {
           console.log(`Get Success! ${state.todos}`);
           setTimeout(() => {
-            state.todos = res.data.resBody;
-            isLoading.value = false
-          }, 400)
-        }).catch(err => {
+            state.todos = res.data.resBody.slice().reverse();
+            isLoading.value = false;
+          }, 400);
+        })
+        .catch((err) => {
           console.error(err);
         })
+    };
+
+    const moveTodoEdit = async (todo: Todo) => {
+      await router.push({ path: `/todo-edit/${todo.uuid}` })
     }
 
-    const createTodo = async () => {
-      await axios.put(baseURL, { title: state.title })
-      state.title = ''
+    // Todo Edit
+    const updateTodo = async (todo: Todo) => {
+      await axios
+        .post(baseURL + todo.uuid, {
+          title: todo.title,
+          status: todo.status,
+        })
+        .catch(() => {
+          console.log("更新に失敗しました!!");
+        });
       getTodos();
     };
 
-    const updateTodo = async (todo: Todo) => {
-      await axios.post(baseURL + todo.uuid, {
-        title: todo.title,
-        status: todo.status,
-      })
-      .catch(()=> {
-        console.log("更新に失敗しました!!");
-      })
-      getTodos();
-    }
-
+    // Todo Delete
     const deleteTodo = async (todo: Todo) => {
-      await axios.delete(baseURL + todo.uuid);
-      getTodos();
-    }
+      // const deleteCheck = confirm("本当に消去してよいですか？");
+      // if (deleteCheck === true) {
+        await axios.delete(baseURL + todo.uuid);
+        getTodos();
+      // }
+    };
 
     getTodos();
 
@@ -101,45 +108,10 @@ export default defineComponent({
       fullPage,
       state,
       getTodos,
-      createTodo,
       updateTodo,
       deleteTodo,
-    }
-  }
-})
+      moveTodoEdit,
+    };
+  },
+});
 </script>
-
-<style lang="scss">
-#app {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  @apply text-font-color;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
-
-.todo-item {
-  display: flex;
-  justify-content: center;
-
-  .margin-r1 {
-    margin-right: 1rem;
-  }
-}
-
-.margin-r1 {
-  margin-right: 1rem;
-}
-
-</style>
