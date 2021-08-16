@@ -2,7 +2,34 @@
   <h1>TODO APP</h1>
   <div class="container mx-auto">
     <div class="m-3 px-3 py-3 bg-gray-200 rounded-md shadow">
-      <TodoInput />
+      <div class="flex flex-wrap content-center h-13">
+        <div class="text-left flex-grow-3">
+          <input @keyup.enter="createTodo"
+            v-model="state.title"
+            placeholder="Todoを入力"
+            class="
+            w-full
+            px-2
+            py-4
+            border border-white
+            rounded-md
+            focus:outline-none"/>
+        </div>
+      </div>
+    <button class="
+      m-5
+      px-2
+      py-1
+      text-blue-500
+      rounded-md
+      cursor-pointer
+      hover:text-blue-700
+      bg-white
+      font-bold
+      border-1 border-blue-500"
+      @click="createTodo">
+      Create
+    </button>
     </div>
     <br />
     <loading :active="isLoading" :can-cancel="true" :is-full-page="fullPage" />
@@ -12,8 +39,6 @@
   <h4>{{ state.todos.length }}件</h4>
 
   <!-- Todoリストを表示 -->
-  <button @click="moveTodoEdit">編集</button>
-
   <TodoItem
     v-for="item in state.todos"
     :key="item.uuid"
@@ -21,6 +46,7 @@
     @update="moveTodoEdit"
     @delete="deleteTodo"
   />
+
 </template>
 
 <script lang="ts">
@@ -29,7 +55,7 @@ import { defineComponent, reactive, ref } from "vue";
 import axios from "axios";
 import Loading from "vue-loading-overlay";
 import TodoItem from '../components/TodoItem.vue';
-import TodoInput from '../components/TodoInput.vue';
+// import TodoInput from '../components/TodoInput.vue';
 
 import "vue-loading-overlay/dist/vue-loading.css";
 
@@ -46,7 +72,7 @@ export default defineComponent({
   components: {
     Loading,
     TodoItem,
-    TodoInput,
+    // TodoInput,
   },
 
   setup() {
@@ -74,6 +100,17 @@ export default defineComponent({
           console.error(err);
         })
     };
+
+    const createTodo = async () => {
+          if (state.title === "") {
+            alert("TODOを入力してください")
+          }
+          else {
+            await axios.put(baseURL, { title: state.title });
+            state.title = "";
+            getTodos()
+          }
+        };
 
     const moveTodoEdit = async (todo: Todo) => {
       await router.push({ path: `/todo-edit/${todo.uuid}` })
@@ -108,6 +145,7 @@ export default defineComponent({
       fullPage,
       state,
       getTodos,
+      createTodo,
       updateTodo,
       deleteTodo,
       moveTodoEdit,

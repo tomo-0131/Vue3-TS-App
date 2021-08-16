@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Home from "../views/Home.vue";
 import Todo from "../views/Todo.vue";
+import TodoEdit from "../views/TodoEdit.vue";
 
 const routes: Array<RouteRecordRaw> = [
 	{
@@ -17,6 +18,11 @@ const routes: Array<RouteRecordRaw> = [
 		path: "/todo",
 		name: "Todo",
 		component: Todo,
+	},
+	{
+		path: "/todo-edit/:id",
+		name: "TodoEdit",
+		component: TodoEdit,
 	},
 ];
 
