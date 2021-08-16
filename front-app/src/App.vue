@@ -1,11 +1,19 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link> |
-    <router-link to="/todo">Todo</router-link>
-  </div>
-  <router-view />
+  <TheHeader />
+    <router-view />
 </template>
+
+<script lang="ts">
+import { defineComponent } from "vue";
+import TheHeader from "../src/components/shared/TheHeader.vue"
+
+export default defineComponent({
+  name: "app",
+  components: {
+    TheHeader,
+  }
+})
+</script>
 
 <style lang="scss">
 #app {
