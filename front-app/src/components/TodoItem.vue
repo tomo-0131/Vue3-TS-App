@@ -1,109 +1,62 @@
 <template>
-  <!-- <div class="m-4 px-3 py-2 bg-gray-400 rounded-md shadow">
-    <div class="flex flex-wrap content-center h-12">
-      <div class="flex-grow-3 text-left">
-        <div class="text-left flex-grow-1">
-          <input
-            v-model="state.task.title"
-            type="text"
-            class="
-              w-full
-              px-2
-              py-1
-              rounded-md
-              focus:outline-none
-            "
-            placeholder="Title"
-          />
-        </div>
-      </div>
-    </div> -->
-
-    <tr v-for="{ id, title, completed } in todos" :key="id">
-      <td class="title" v-bind:class="{ completed: completed }">
-        {{ title }}
-      </td>
-      <td>
-        <router-link :to="'/todo-edit?todoID=' + id" class="btn">Edit</router-link>
-      </td>
-      <td>
-        <button class="btn btn-danger">Delete</button>
-      </td>
-    </tr>
-
-    <!-- <div class="flex flex-wrap content-center text-center h-12">
-      <select
-        class="
-          rounded-md
-          flex-grow-3
-          font-bold
-          justify-center
-          bg-gray-100
-          text-gray-700
-          focus:outline-none
-        "
-        v-model="state.task.status"
-      >
-        <option value="todo">todo</option>
-        <option value="wip">wip</option>
-        <option value="done">done</option>
-      </select>
-
-      <div
-        class="
-          py-1
-          mx-2
-          text-green-500
-          rounded-md
-          cursor-pointer
-          flex-grow-1
-          hover:text-green-700
-          bg-gray-200
-          font-bold
-          border-2 border-green-500
-        "
-        @click="$emit('update', state.task)"
-      >
-        Update
-      </div>
-      <div
-        class="
-          py-1
-          text-red-500
-          rounded-md
-          cursor-pointer
-          flex-grow-1
-          hover:text-red-700
-          bg-gray-200
-          font-bold
-          border-2 border-red-500"
-        @click="$emit('delete', state.task)"
-      >
-        Delete
-      </div>
+  <main>
+    <div class="borderpy-2 container mx-auto">
+      {{ todos.length }}件<br/>
+      <h1 class="font-bold rounded text-white bg-blue-300 border py-3">Todos</h1>
+      <table class="table-fixed">
+        <thead class="bg-gray-400 text-white">
+          <tr class="containe mx-auto">
+            <th class="w-1/2 border px-10 py-1 title">Title</th>
+            <th class="w-1/2 border px-10 py-1 edit">Edit</th>
+            <th class="w-1/2 border px-10 py-1 delete">Delete</th>
+          </tr>
+        </thead>
+        <tbody class="container">
+          <tr v-for="{ id, title, completed } in todos" :key="id">
+            <td class="border title" v-bind:class="{ completed: completed }">
+              {{ title }}
+            </td>
+            <td class="border">
+              <router-link :to="'/todo-edit?todoID=' + id"
+                class="px-12 py-3 m-1 font-bold rounded text-white bg-blue-300">
+                Edit
+              </router-link>
+            </td>
+            <td class="border">
+              <button class="px-12 py-3 m-1 font-bold rounded text-white bg-red-300">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  </div> -->
+  </main>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { defineComponent, onUnmounted, ref } from 'vue';
+import { db } from '../../../src/firebase/config'
 
 export default defineComponent({
   name: "TodoItem",
-  props: {
-    todo: {
-      type: Object as PropType<Todo>,
-      default: null,
-    },
-  },
   setup() {
-    const
-    // const state = {
-    //   task: JSON.parse(JSON.stringify(props.todo)),
-    // };
-    // return {
-    //   state,
-    // };
+    const todosCollection = db.collection('todos')
+    const todos = ref([]);
+
+    const getTodos = todosCollection.orderBy('creationTime', 'asc')
+    .onSnapshot(snapshot => {
+      // console.log(snapshot.docs)
+
+      todos.value = snapshot.docs.map(doc => ({
+        id: doc.id, ...doc.data()
+      }))
+    })
+    onUnmounted(getTodos);
+
+    return {
+      todosCollection,
+      todos,
+      getTodos,
+    }
   },
 });
 </script>
