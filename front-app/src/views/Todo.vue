@@ -36,16 +36,10 @@
   </div>
 
   <!-- データ件数 -->
-  <h4>{{ state.todos.length }}件</h4>
+  <!-- <h4>{{ state.todos.length }}件</h4> -->
 
   <!-- Todoリストを表示 -->
-  <TodoItem
-    v-for="item in state.todos"
-    :key="item.uuid"
-    :todo=item
-    @update="moveTodoEdit"
-    @delete="deleteTodo"
-  />
+  <TodoItem />
 
 </template>
 
