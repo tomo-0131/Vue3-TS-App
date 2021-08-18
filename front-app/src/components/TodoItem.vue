@@ -1,7 +1,7 @@
 <template>
   <main>
-    <div class="borderpy-2 container mx-auto">
-      {{ todos.length }}件<br/>
+    <div class="border py-2 container mx-auto">
+      <div class="py-2 font-bold bg-gray-500 text-white">Todo件数: {{ todos.length }}件</div><br/>
       <h1 class="font-bold rounded text-white bg-blue-300 border py-3">Todos</h1>
       <table class="table-fixed">
         <thead class="bg-gray-400 text-white">
