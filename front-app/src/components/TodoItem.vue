@@ -1,5 +1,5 @@
 <template>
-  <div class="m-4 px-3 py-2 bg-gray-400 rounded-md shadow">
+  <!-- <div class="m-4 px-3 py-2 bg-gray-400 rounded-md shadow">
     <div class="flex flex-wrap content-center h-12">
       <div class="flex-grow-3 text-left">
         <div class="text-left flex-grow-1">
@@ -17,9 +17,21 @@
           />
         </div>
       </div>
-    </div>
+    </div> -->
 
-    <div class="flex flex-wrap content-center text-center h-12">
+    <tr v-for="{ id, title, completed } in todos" :key="id">
+      <td class="title" v-bind:class="{ completed: completed }">
+        {{ title }}
+      </td>
+      <td>
+        <router-link :to="'/todo-edit?todoID=' + id" class="btn">Edit</router-link>
+      </td>
+      <td>
+        <button class="btn btn-danger">Delete</button>
+      </td>
+    </tr>
+
+    <!-- <div class="flex flex-wrap content-center text-center h-12">
       <select
         class="
           rounded-md
@@ -70,16 +82,12 @@
         Delete
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-type Todo = {
-  uuid: string;
-  title: string;
-  status: 'todo' | 'wip' | 'done';
-};
+
 export default defineComponent({
   name: "TodoItem",
   props: {
@@ -88,13 +96,14 @@ export default defineComponent({
       default: null,
     },
   },
-  setup(props) {
-    const state = {
-      task: JSON.parse(JSON.stringify(props.todo)),
-    };
-    return {
-      state,
-    };
+  setup() {
+    const
+    // const state = {
+    //   task: JSON.parse(JSON.stringify(props.todo)),
+    // };
+    // return {
+    //   state,
+    // };
   },
 });
 </script>
