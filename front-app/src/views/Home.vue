@@ -1,17 +1,33 @@
 <template>
-  <div class="home">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+  <!-- ログイン中の場合こちらを表示 -->
+  <div v-if="user" class="home">
+    <h1>WELCOME</h1>
+    <h1>{{ user.displayName }} 様</h1>
   </div>
+
+  <!-- 未ログインの場合こちらを表示 -->
+  <div v-else>
+    <Welcome />
+  </div>
+
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+import Welcome from "../views/Welcome.vue";
+import getUser from "../composables/getUser";
 
 export default defineComponent({
   name: "Home",
   components: {
-    HelloWorld,
+    Welcome,
   },
+  setup() {
+    const { user } = getUser();
+
+    return {
+      user,
+    }
+  }
 });
 </script>

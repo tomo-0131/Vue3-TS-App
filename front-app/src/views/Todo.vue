@@ -51,6 +51,7 @@
 
 <script lang="ts">
 import router from "../router"
+import { db } from '../../../src/firebase/config';
 import { defineComponent, reactive, ref } from "vue";
 import axios from "axios";
 import Loading from "vue-loading-overlay";
@@ -77,6 +78,8 @@ export default defineComponent({
 
   setup() {
     const state = reactive({
+      creationTime: null,
+      completed: false,
       title: "",
       todos: [],
     });
@@ -87,30 +90,43 @@ export default defineComponent({
     // 全データ取得
     const getTodos = async () => {
       isLoading.value = true;
-      await axios
-        .get(baseURL)
-        .then((res) => {
-          console.log(`Get Success! ${state.todos}`);
-          setTimeout(() => {
-            state.todos = res.data.resBody.slice().reverse();
-            isLoading.value = false;
-          }, 400);
-        })
-        .catch((err) => {
-          console.error(err);
-        })
+      await todosCollection.get()
+      isLoading.value = false;
     };
 
-    const createTodo = async () => {
-          if (state.title === "") {
-            alert("TODOを入力してください")
-          }
-          else {
-            await axios.put(baseURL, { title: state.title });
-            state.title = "";
-            getTodos()
-          }
-        };
+    // const getTodos = async () => {
+    //   isLoading.value = true;
+    //   await axios
+    //     .get(baseURL)
+    //     .then((res) => {
+    //       console.log(`Get Success! ${state.todos}`);
+    //       setTimeout(() => {
+    //         state.todos = res.data.resBody.slice().reverse();
+    //         isLoading.value = false;
+    //       }, 400);
+    //     })
+    //     .catch((err) => {
+    //       console.error(err);
+    //     })
+    // };
+
+    const todosCollection = db.collection('todos');
+    const createTodo = async() => {
+      await todosCollection.add({
+        ...state,
+        creationTime: Date.now()
+      })
+      state.title = ''
+    };
+      // if (state.title === "") {
+      //   alert("TODOを入力してください")
+      // }
+      // else {
+      //   await axios.put(baseURL, { title: state.title });
+      //   state.title = "";
+      //   getTodos()
+      // }
+
 
     const moveTodoEdit = async (todo: Todo) => {
       await router.push({ path: `/todo-edit/${todo.uuid}` })

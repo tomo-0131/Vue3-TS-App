@@ -34,6 +34,7 @@
 
 <script lang="ts">
 import router from "../router"
+import { db } from '../../../src/firebase/config';
 import { defineComponent, reactive, ref } from "vue";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
@@ -50,12 +51,33 @@ export default defineComponent({
 
   setup() {
     const state = reactive({
+      creationTime: null,
+      completed: false,
       title: "",
       todos: [],
     });
 
     const isLoading = ref(false);
     const fullPage = ref(true);
+
+    const TodosCollection = db.collection('todos')
+
+    const createTodo = async () => {
+      await TodosCollection.add({
+        ...state,
+        creationTime: Date.now
+      })
+      state.title = ''
+
+      // if (state.title === "") {
+      //   alert("TODOを入力してください")
+      // }
+      // else {
+      //   await axios.put(baseURL, { title: state.title });
+      //   state.title = "";
+      //   getTodos()
+      // }
+    };
 
     const getTodos = async () => {
       isLoading.value = true;
@@ -71,17 +93,6 @@ export default defineComponent({
         .catch((err) => {
           console.error(err);
         })
-    };
-
-    const createTodo = async () => {
-      if (state.title === "") {
-        alert("TODOを入力してください")
-      }
-      else {
-        await axios.put(baseURL, { title: state.title });
-        state.title = "";
-        getTodos()
-      }
     };
 
     getTodos()

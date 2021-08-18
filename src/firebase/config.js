@@ -1,9 +1,9 @@
+/* eslint-disable */
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/auth'
 import 'firebase/storage'
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyCaHEJAQpX7yDxluw25BDW8D74_oYKc7m0",
   authDomain: "vue3-typescript-todo.firebaseapp.com",
@@ -14,12 +14,14 @@ const firebaseConfig = {
   measurementId: "G-F1NBKDJ9W4"
 };
 
-firebase.initializeApp(firebaseConfig);
+const firebaseApp = firebase.initializeApp(firebaseConfig);
+// firebase.analytics()
 
 const projectFirestore = firebase.firestore()
 const projectAuth = firebase.auth()
 const projectStorage = firebase.storage()
 
-const timestamp = firebase.firestore.FieldValue.serverTimestamp
+const timestamp = firebase.firestore.FieldValue.serverTimestamp;
 
 export { projectFirestore, projectAuth, projectStorage, timestamp }
+export const db = firebaseApp.firestore()
